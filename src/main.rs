@@ -1,4 +1,5 @@
 use macroquad::prelude::*;
+use macroquad::rand::gen_range;
 
 struct Ball {
     x: f32,
@@ -16,18 +17,21 @@ struct Paddle {
     speed: f32,
 }
 
-fn ball_hits_paddle(ball: &Ball, paddle: &Paddle) -> bool{
+fn ball_hits_paddle(ball: &Ball, paddle: &Paddle) -> bool {
     ball.x + ball.radius >= paddle.x
-    && ball.x - ball.radius <= paddle.x + paddle.width
-    && ball.y + ball.radius >= paddle.y
-    && ball.y - ball.radius <= paddle.y + paddle.height
+        && ball.x - ball.radius <= paddle.x + paddle.width
+        && ball.y + ball.radius >= paddle.y
+        && ball.y - ball.radius <= paddle.y + paddle.height
 }
 
-fn reset_ball(ball: &mut Ball){
+fn reset_ball(ball: &mut Ball) {
     ball.x = screen_width() / 2.0;
     ball.y = screen_height() / 2.0;
-    ball.vel_x *= -1.0;
-    ball.vel_y = 180.0;
+    
+    let direction = if gen_range(0, 2) == 0 {-1.0} else {1.0};
+    
+    ball.vel_x = 250.0 * direction;
+    ball.vel_y = gen_range(-200.0, 200.0);
 }
 
 #[macroquad::main("Pong")]
@@ -90,16 +94,20 @@ async fn main() {
             let hit_pos = (ball.y - paddle_center) / (left_paddle.height / 2.0);
 
             ball.vel_y = hit_pos * 300.0;
+
+            ball.x = left_paddle.x + left_paddle.width + ball.radius;
         }
 
         if ball_hits_paddle(&ball, &right_paddle) && ball.vel_x > 0.0 {
             ball.vel_x *= -1.05;
-            
+
             let paddle_center = right_paddle.y + right_paddle.height / 2.0;
-            
+
             let hit_pos = (ball.y - paddle_center) / (right_paddle.height / 2.0);
-            
+
             ball.vel_y = hit_pos * 300.0;
+
+            ball.x = right_paddle.x - ball.radius;
         }
 
         if ball.x < 0.0 {
@@ -118,6 +126,8 @@ async fn main() {
         }
 
         clear_background(BLACK);
+
+        draw_line(screen_width() / 2.0, 0.0,screen_width() /2.0, screen_height(),2.0, GRAY);
 
         draw_text(
             &format!("{} : {}", left_score, right_score),
@@ -145,8 +155,12 @@ async fn main() {
             WHITE,
         );
 
-        left_paddle.y = left_paddle.y.clamp(0.0, screen_height() - left_paddle.height);
-        right_paddle.y = right_paddle.y.clamp(0.0, screen_height() - right_paddle.height);
+        left_paddle.y = left_paddle
+            .y
+            .clamp(0.0, screen_height() - left_paddle.height);
+        right_paddle.y = right_paddle
+            .y
+            .clamp(0.0, screen_height() - right_paddle.height);
 
         next_frame().await;
     }

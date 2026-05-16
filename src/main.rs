@@ -84,12 +84,22 @@ async fn main() {
 
         if ball_hits_paddle(&ball, &left_paddle) && ball.vel_x < 0.0 {
             ball.vel_x *= -1.05;
-            ball.vel_y *= 1.03;
+
+            let paddle_center = left_paddle.y + left_paddle.height / 2.0;
+
+            let hit_pos = (ball.y - paddle_center) / (left_paddle.height / 2.0);
+
+            ball.vel_y = hit_pos * 300.0;
         }
 
         if ball_hits_paddle(&ball, &right_paddle) && ball.vel_x > 0.0 {
-            ball.vel_x *= -1.005;
-            ball.vel_y *= 1.03;
+            ball.vel_x *= -1.05;
+            
+            let paddle_center = right_paddle.y + right_paddle.height / 2.0;
+            
+            let hit_pos = (ball.y - paddle_center) / (right_paddle.height / 2.0);
+            
+            ball.vel_y = hit_pos * 300.0;
         }
 
         if ball.x < 0.0 {

@@ -1,0 +1,32 @@
+# Rust / Cargo
+/target/
+**/*.rs.bk
+*.pdb
+
+# Cargo.lock NICHT ignorieren bei Binaries (dein Projekt ist eine Binary -> committen!)
+# Falls es eine Library wäre, würdest du Cargo.lock ignorieren.
+
+# IntelliJ / RustRover / CLion / IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# VS Code
+.vscode/
+
+# Betriebssystem-spezifisch
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs & temporäre Dateien
+*.log
+*.tmp
+*.swp
+*~
+
+# macroquad / Build-Artefakte (z. B. WASM-Output, falls du für Web baust)
+*.wasm
+dist/
